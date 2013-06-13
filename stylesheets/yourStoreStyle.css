@@ -1,0 +1,66 @@
+#container{
+
+	width: 100%;
+
+	align: center;
+
+}
+
+#returnedHtml{
+	display: none;
+}
+
+
+.strLabel .apprlLabel{
+
+	margin:0 1em 0.5em 0;
+
+}
+
+
+
+#sidebar{
+
+	text-align: left;
+
+	float: left;
+
+	position: fixed;
+
+	width: 18%;
+
+}
+
+
+
+#pageTitle{
+
+	text-align: center;
+
+}
+
+
+
+#searchBtn{
+
+	margin: 0.5em 0 0 6em;
+
+}
+
+
+
+#html-data{
+
+	margin: 0 0 0 20em;
+
+	width: 80%;
+
+}
+
+
+
+#loadingDiv{
+
+	margin: 10em 0 0 0em;
+
+}

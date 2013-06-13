@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<meta charset="UTF-8">
+
+	<title>Jcrew</title>
+
+	<meta name="description" content="">
+
+	<meta name="author" content="">
+
+	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/themes/black-tie/jquery-ui.css" type="text/css">
+
+	<link rel="stylesheet" href="stylesheets/yourStoreStyle.css" type="text/css">
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>	
+
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
+
+	<script type="text/javascript" src="http://jzaefferer.github.com/jquery-validation/jquery.validate.js"></script>
+
+	<script> 		
+
+		$(function(){ // page is loaded		
+
+
+			});
+
+	</script>
+
+</head>
+
+<body>
+	<div>
+		<p>Use the search panel on the left!</p>
+	</div>	
+
+
+</body>
+
+</html>

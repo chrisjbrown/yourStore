@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta charset="UTF-8">
+	<title>Your Store</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/themes/black-tie/jquery-ui.css" type="text/css">
+	<link rel="stylesheet" href="stylesheets/yourStoreStyle.css" type="text/css">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>	
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="http://jzaefferer.github.com/jquery-validation/jquery.validate.js"></script>
+	<script> 		
+		$(function(){ // page is loaded		
+			$("#storeTabs").tabs({
+				beforeLoad: function( event, ui ) {
+					if ( ui.tab.data( "loaded" ) ) {
+						event.preventDefault();
+						return;
+					}
+					ui.jqXHR.success(function() {
+						ui.tab.data( "loaded", true );
+					});
+				},
+				active: 1
+			});
+			//create tabs when dom is loaded
+				$('.strBox').each(function(){
+					//if tab does not exist
+					if($("#" + $(this).val() + "Tab").length == 0){
+						//add tab
+						var newLength = $("#storeTabs ul li").length;
+						$( '<li id="'+$(this).val()+'Tab"><a href="/tabs/' + $(this).val() + 'Tab">'+ $(this).attr('name') +'</a></li>' ).appendTo("#storeTabs .ui-tabs-nav");
+						$("#" + $(this).val() + "Tab").hide();
+						//$("#storeTabs").tabs();
+						$("#storeTabs").tabs( "refresh" );
+					}
+
+					if($(this).is(':checked')){
+						//remove example tab
+						$("#starterli").hide();	
+						$("#" + $(this).val() + "Tab").show();
+					}
+				});
+
+				$('.strBox').promise().done(function() {
+					$("#storeTabs").tabs( "option", "active", 1 );
+				});
+
+			//toggle visiblity of tabs
+			$('.strBox').click(function(){
+				if($(this).is(':checked')){
+					$("#" + $(this).val() + "Tab").show();
+					//$("#storeTabs").tabs();
+					var id = this.id;
+					var lastChar = id[id.length-1];
+					$("#storeTabs").tabs( "option", "active", lastChar );
+				}else{
+					//$("#storeTabs").tabs();
+					$("#" + $(this).val() + "Tab").hide();
+
+					$("#storeTabs").tabs( "option", "active", 1 );
+				}
+				var allHidden = true;
+				$('.strBox').each(function(){
+					if($(this).is(':checked')){
+						allHidden = false;
+					}
+				});
+				if(allHidden){
+					$("#starterli").show();
+				}else{
+					$("#starterli").hide();
+				}
+			});
+			//handle check boxes and search
+				var pageTitle = "";
+				$('#strAll').click(function() {
+					$('.strBox').prop('checked', !$('.strBox')[0].checked);
+				});
+				$('#apprlAll').click(function() {
+					$('.apprlBox').prop('checked', !$('.apprlBox')[0].checked);
+				});
+				var icons = {
+					header: "ui-icon-circle-arrow-e",
+					activeHeader: "ui-icon-circle-arrow-s"
+				};
+				$( "#accordion" ).accordion({
+					icons: icons,
+					collapsible: true
+				});
+				$( "#toggle" ).button().click(function() {
+					if ( $( "#accordion" ).accordion( "option", "icons" ) ) {
+						$( "#accordion" ).accordion( "option", "icons", null );
+					} else {
+						$( "#accordion" ).accordion( "option", "icons", icons );
+					}
+				});
+				$('#searchBtn').button().click(function( event ) {
+					var strArray = $('input:checkbox:checked.strBox').map(function () {
+	  						return this.value;
+	  					}).get();
+					var apprlArray = $('input:checkbox:checked.apprlBox').map(function () {
+	  						return this.value;
+	  					}).get();
+					if (strArray.length === 0 || apprlArray.length === 0) { // if nothing selected, do nothnig
+						//$("#pageTitle").text("Select a store and apparel");
+					}else{ // make the php call to get the apparel
+						$("#pageTitle").text("Your stores are on their way...");
+						$(".ui-tabs-panel").html('<div id="loadingDiv"><img src="stylesheets/images/loading.gif" alt="Loading..." /></div>')
+						//$("#pageTitle").text("");
+						$.ajax({
+							url: "GetApparel.php",
+							type: 'post',
+							data: { stores: strArray, apparel: apprlArray }
+						}).done(function( html ) {
+							if(html == -1){
+								$("#html-data").append("Sorry, nothing was found");
+							}else{
+								$("#pageTitle").text("Enjoy your stores");
+								$("#unsortedHtml").append(html);
+								for (var i = 0; i < strArray.length; ++i) {
+									var prodArray = $("#prodArray" + strArray[i]);
+									var tab = $('#' + strArray[i] + 'Tab');
+									// Find the id of the associated panel
+									var panelId = tab.attr( "aria-controls" );
+								    $("#" + panelId).html(prodArray);
+								    //$("#storeTabs").tabs( "refresh" );
+								}
+								$("#unsortedHtml").empty();
+							}
+						});
+					}
+				});
+			});
+	</script>
+</head>
+<body>
+<div id="container" align="center">
+	<div id="header-container">
+		<header>
+			<div>
+				<h1 id="pageTitle">Select a store and apparel</h1>
+			</div>
+		</header>
+	</div>
+	<div id="sidebar">
+		<div id="accordion">
+			<h3 class="">Stores</h3>
+			<div id="str-check"> 
+				<table>
+					<tr>
+						<td>
+							<input type="checkbox" id="str1" class="strBox" name="Jcrew" value="jcrew">
+							<label for="str1" class="inlineLabel strLabel">JCrew</label>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="str2" class="strBox" name="Urban Outfitters" value="urbanOutfitters">			
+							<label for="str2" class="inlineLabel strLabel">Urban Outfitters</label>
+						</td>
+					</tr>
+					<!-- <tr>
+						<td>
+							<input type="checkbox" id="strAll" class="strBoxAll" value="all">
+							<label for="strAll" class="inlineLabel strLabel">All</label>
+						</td>
+					</tr> -->
+				</table>
+			</div>
+			<h3 class="ui-accordion-header">Apparel type (*Optional)</h3>
+			<div id="apprl-check" class="ui-accordion-content"> 
+				<table>
+					<tr>
+						<td>
+							<input type="checkbox" id="apprll" class="apprlBox" value="pants">
+							<label for="apprll" class="inlineLabel apprlLabel">Pants</label>
+						</td>
+						<td>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="apprl2" class="apprlBox" value="shirts">
+							<label for="apprl2" class="inlineLabel apprlLabel">Shirts</label>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="apprl3" class="apprlBox" value="sweaters">
+							<label for="apprl3" class="inlineLabel apprlLabel">Sweaters</label>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="checkbox" id="apprlAll" class="apprlBox" value="all">
+							<label for="apprlAll" class="inlineLabel apprlLabel">All</label>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<input id="searchBtn" type="submit" value="Search" />
+	</div>
+	<div id="loadingDiv" style="display: none;">
+		<img src='stylesheets/images/loading.gif' alt='Loading...' />
+	</div>		
+	<div id="html-data">
+		<div id="storeTabs">
+    		<ul>
+    			<li id="starterli"><a href="/tabs/starterTab"><span>Pick a Store</span></a></li>
+    		</ul>
+    	</div>
+	</div>
+	<div id="unsortedHtml">
+	</div>
+</div>
+</body>
+</html>
